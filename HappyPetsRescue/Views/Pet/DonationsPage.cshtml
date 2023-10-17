@@ -1,0 +1,209 @@
+﻿@model HappyPetsRescue.Models.DonationsViewModel
+
+<style>
+    .box {
+        width: 120px;
+        height: 30px;
+        border: 1px solid #999;
+        font-size: 18px;
+        color:Black;
+        background-color: #eee;
+        border-radius: 5px;
+        box-shadow: 4px 4px #6F4914;
+    }
+
+    h1 {
+        text-align: center;
+        color: #6F4914;
+    }
+
+    p {
+        padding: 0px;
+        margin: 1px;
+        font-family: Calibri;
+    }
+
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        color: #6F4914;
+    }
+
+    input {
+        font-size: 17px;
+    }
+
+    option {
+        font-size: 17px;
+    }
+
+    .myProgress-Bar {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    button {
+        font-size: 16px;
+        position: relative;
+        margin: auto;
+        padding: 1em 2.5em 1em 2.5em;
+        border: none;
+        background: Black;
+        transition: all 0.1s linear;
+        box-shadow: 10px 5px 5px #6F4914;
+    }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button span {
+            color: white;
+            font-weight: bold;
+        }
+
+        button .border {
+            position: absolute;
+            border: 0.15em solid #f7f7f7;
+            transition: all 0.3s 0.08s linear;
+            top: 50%;
+            left: 50%;
+            width: 3em;
+            height: 3em;
+            transform: translate(-50%, -50%);
+        }
+
+        button:hover .border {
+            display: block;
+            width: 10.7em;
+            height: 3.8em;
+        }
+
+    .full-rounded {
+        border-radius: 2em;
+    }
+</style>
+
+<h1 style="font-family: Brush Script MT, cursive;"><b>Donate Now!</b></h1>
+
+<div class="container-fluid">
+    <div class="row row-cols-2">
+        <div class="col">
+            <h4 style="font-family: Brush Script MT, cursive;"><b>Empower Change, Donate Today!</b></h4>
+            <p style="text-align:justify">
+            Happy Pets Rescue, as a vital platform for pet adoption, relies on your donations to continue connecting pets in need with loving families. 
+            Your support ensures we maintain a seamless and efficient platform, facilitating adoptions and saving lives. 
+            Every rand contributes to the success of our mission, enabling us to reach more potential adopters, increase awareness about responsible pet ownership, 
+            and ultimately rescue more pets from uncertain futures. Your donation fuels the transformation of pets' lives, fostering a community where every pet finds a forever home, 
+            and every heart finds unconditional love. Donate now to change a pet's destiny.</p>
+        </div>
+        <div class="col">
+            @using (Html.BeginForm("DonationsPage", "Pet", FormMethod.Post))
+            {
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Full Name</label>
+                    <br />
+                    <select id="userName" name="userName" class="box" style="width:75%">
+                            <option value="">Select full name</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="userPhoneNo" class="form-label">Phone Number</label>
+                    <br />
+                    <select id="userPhoneNo" name="userPhoneNo" class="box" style="width:75%">
+                        <option value="">Select phone number</option>
+                    </select>
+                </div>
+                <div class="group">
+                    <label for="Amount" class="form-label">Donation Amount</label>
+                    <br />
+                    <input type="number" id="Amount" name="Amount" class="box">
+                </div>
+                <hr />
+                <button type="submit" class="full-rounded">
+                    <span>Donate Now</span>
+                    <div class="border full-rounded"></div>
+                </button>
+
+            }
+
+        </div>
+    </div>
+    <div>
+        <div class="justify-content-end"><p><b>OUR GOAL IS TO RAISE @Model.goalAmount.ToString("C")</b></p></div>
+
+        @if (Model.IsGoalReached)
+        {
+            <div class="progress myProgress-Bar" style="height:35px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: @Model.progressBarPercentage;"
+                     aria-valuenow="@Model.progressBarPercentage" aria-valuemin="0" aria-valuemax="100">
+                    <b>WE HAVE REACHED OUR GOAL! THANK YOU FOR YOUR DONATIONS!</b>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="progress myProgress-Bar" style="height:35px;">
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: @Model.progressBarPercentage;"
+                     aria-valuenow="@Model.progressBarPercentage" aria-valuemin="0" aria-valuemax="100">
+                    <b>TOTAL RAISED: @Model.totalDonations.ToString("C")</b>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+<script>
+
+    $(function DropDownPopulater() {
+
+        $(document).ready(function () {
+        $.get('@Url.Action("GetUsers", "Pet")')
+                    .done(function (data) {
+                        var userNames = data.split(";")[0].split(",");
+                        var userIds = data.split(";")[1].split(",");
+                        var users = [];
+                        for (var i = 0; i < userNames.length; i++) {
+                            users.push({ id: userIds[i], name: userNames[i] });
+                        }
+
+                        var userNameDropdown = $("#userName");
+                        userNameDropdown.empty();
+                        userNameDropdown.append($("<option></option>").val("").text("Select full name"));
+                        $.each(users, function (i, user) {
+                            userNameDropdown.append($("<option></option>").val(user.id).text(user.name));
+                        });//close each function
+                        userNameDropdown.prop("disabled", false);
+                    });//close done function
+        });//close ready function
+
+
+        $("#userName").change(function () {
+            var userID = $(this).val();
+            if (userID) {
+                $.get('@Url.Action("GetUserPhoneNumber", "Pet")', { userID: userID })
+                    .done(function (data) {
+                        var userPhoneNumbers = data.split(";")[0].split(",");
+                        var userIds = data.split(";")[1].split(",");
+                        var users = [];
+                        for (var i = 0; i < userPhoneNumbers.length; i++) {
+                            users.push({ id: userIds[i], name: userPhoneNumbers[i] });
+                        }
+
+                        var PhoneDropdown = $("#userPhoneNo");
+                        PhoneDropdown.empty();
+                        PhoneDropdown.append($("<option></option>").val("").text("Select phone number"));
+                        $.each(users, function (i, user) {
+                            PhoneDropdown.append($("<option></option>").val(user.id).text(user.name));
+                        });//close each function             
+                        PhoneDropdown.prop("disabled", false);
+                    });//close done function
+            } else {
+                $("#userPhoneNo").empty().append($("<option></option>").val("").text("Select phone number")).prop("disabled", true);
+            }
+        }); //close supplier change function
+
+    });//close populater function
+</script>

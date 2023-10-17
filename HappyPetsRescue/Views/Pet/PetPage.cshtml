@@ -1,0 +1,247 @@
+﻿@model IEnumerable<HappyPetsRescue.Models.Pet>
+
+<style>
+    .box {
+        width: 120px;
+        height: 30px;
+        border: 1px solid #999;
+        font-size: 18px;
+        color: Black;
+        background-color: #eee;
+        border-radius: 5px;
+        box-shadow: 4px 4px #6F4914;
+    }
+
+    p {
+        padding: 0px;
+        margin: 1px;
+        font-family: Calibri;
+    }
+
+    h1 {
+        text-align: center;
+        color: #6F4914;
+    }
+
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        color: #6F4914;
+    }
+
+    input {
+        font-size: 17px;
+    }
+
+    option {
+        font-size: 17px;
+    }
+
+    .petItems1 {
+        background-color: White;
+        border-style: solid;
+        border-width: 5px;
+        border-color: #FF8200; 
+        border-radius: 5px;
+        padding: 10px; 
+        margin: 20px;
+        width: 30%;
+    }
+
+    .petItems2 {
+        background-color: White;
+        border-style: solid;
+        border-width: 5px;
+        border-color: #6F4914;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 20px;
+        width: 30%;
+    }
+
+    button {
+        font-size: 16px;
+        position: relative;
+        margin: auto;
+        padding: 1em 2.5em 1em 2.5em;
+        border: none;
+        background: Black;
+        transition: all 0.1s linear;
+        box-shadow: 10px 5px 5px #6F4914;
+    }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button span {
+            color: white;
+            font-weight: bold;
+        }
+
+        button .border {
+            position: absolute;
+            border: 0.15em solid #f7f7f7;
+            transition: all 0.3s 0.08s linear;
+            top: 50%;
+            left: 50%;
+            width: 3em;
+            height: 3em;
+            transform: translate(-50%, -50%);
+        }
+
+        button:hover .border {
+            display: block;
+            width: 10.7em;
+            height: 3.8em;
+        }
+
+    .full-rounded {
+        border-radius: 2em;
+    }
+</style>
+
+<h1 style="font-family: Brush Script MT, cursive;"><b>Pets</b></h1>
+
+<div class="container-fluid">
+    <div class="row row-cols-4">
+        <div class="col">
+            <label for="petType" class="form-label">Pet Type</label>
+            <br />
+            <select id="petType" name="petType" class="box" style="width:75%">
+                <option value="">Select type</option>
+                @foreach (var petType in Model.Select(pet => pet.PetType).Distinct())
+                {
+                    <option value="@petType.PetTypeID" @(Request.QueryString["typeId"] == petType.PetTypeID.ToString() ? "selected" : "")>@petType.PetTypeName</option>
+                }
+            </select>
+        </div>
+
+        <div class="col">
+            <label for="Breed" class="form-label">Breed</label>
+            <br />
+            <select id="Breed" name="Breed" class="box" style="width:75%">
+                <option value="">Select breed</option>
+            </select>
+        </div>
+
+        <div class="col">
+            <label for="Location" class="form-label">Location</label>
+            <br />
+            <select id="Location" name="Location" class="box" style="width:75%">
+                <option value="">Select location</option>
+                @foreach (var location in Model.Select(pet => pet.Location).Distinct())
+                {
+                    <option value="@location.LocationID" @(Request.QueryString["locationId"] == location.LocationID.ToString() ? "selected" : "")>@location.LocationName</option>
+                }
+            </select>
+        </div>
+
+        <div class="col">
+            <br />
+            <button id="search" class="full-rounded">
+                <span>Search</span>
+                <div class="border full-rounded"></div>
+            </button>
+            <button id="clear" class="full-rounded">
+                <span>Clear</span>
+                <div class="border full-rounded"></div>
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container-fluid">
+    <div class="row row-cols-3">
+        @foreach (var modelItem in Model)
+        {
+            if (modelItem.AdoptionStatus.AdoptionStatusID == 1)
+            {
+                //available
+                <div class="col petItems1 text-center">
+                    <h1 style="font-family: Brush Script MT, cursive; font-weight:bold">@modelItem.PetName</h1>
+                    <img src="~/Images/Pets/@modelItem.PetImage" style="width:250px; height:250px" />
+                    <p><b>Available</b></p>
+                    <p>@modelItem.Gender.GenderName</p>
+                    <p>@modelItem.Location.LocationName - Age: @modelItem.PetAge - Weight: @modelItem.PetWeight kg</p>
+                    <p style="text-align:justify">@modelItem.PetStory</p>
+                    <h4 style="font-family: Brush Script MT, cursive; font-weight:bold">Posted by @modelItem.User.UserFullName</h4>
+                    <button onclick="location.href='@Url.Action("AdoptionsPage", "Pet")?petID=@modelItem.PetID'" class="full-rounded">
+                        <span>View @modelItem.PetName's Profile</span>
+                        <div class="border full-rounded"></div>
+                    </button>
+
+                </div>
+            }
+            else
+            {
+                //adopted
+                <div class="col petItems2 text-center">
+                    <h1 style="font-family: Brush Script MT, cursive; font-weight:bold">@modelItem.PetName</h1>
+                    <img src="~/Images/Pets/@modelItem.PetImage" style="width:250px; height:250px"/>
+                    <p><b>Adopted</b></p>
+                    <p>@modelItem.Gender.GenderName</p>
+                    <p>@modelItem.Location.LocationName - Age: @modelItem.PetAge - Weight: @modelItem.PetWeight kg</p>
+                    <p style="text-align:justify">@modelItem.PetStory</p>
+                    <h4 style="font-family: Brush Script MT, cursive; font-weight:bold">Posted by @modelItem.User.UserFullName</h4>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+<script>
+    $(function DropDownPopulater() {
+
+        $("#petType").change(function () {
+            var petTypeID = $(this).val();
+            if (petTypeID) {
+                $.get('@Url.Action("GetBreedByPetType", "Pet")', { petTypeID: petTypeID })
+                    .done(function (data) {
+                        var breedNames = data.split(";")[0].split(",");
+                        var breedIds = data.split(";")[1].split(",");
+                        var breeds = [];
+                        for (var i = 0; i < breedNames.length; i++) {
+                            breeds.push({ id: breedIds[i], name: breedNames[i] });
+                        }
+
+                        var breedDropdown = $("#Breed");
+                        breedDropdown.empty();
+                        breedDropdown.append($("<option></option>").val("").text("Select breed"));
+                        $.each(breeds, function (i, breed) {
+                            breedDropdown.append($("<option></option>").val(breed.id).text(breed.name));
+                        });//close each function
+                        breedDropdown.prop("disabled", false);
+                    });//close done function
+            } else {
+                $("#Breed").empty().append($("<option></option>").val("").text("Select a category")).prop("disabled", true);
+                //Location.prop("disabled", true);
+            }
+        }); //close supplier change function
+
+        document.getElementById('search').addEventListener('click', function () {
+            var typeId = document.getElementById('petType').value;
+            var breedId = document.getElementById('Breed').value;
+            var locationId = document.getElementById('Location').value;
+            var url = '@Url.Action("PetPage", "Pet")' +
+                '?PetType=' + encodeURIComponent(typeId) +
+                '&Breed=' + encodeURIComponent(breedId) +
+                '&Location=' + encodeURIComponent(locationId);
+            window.location.href = url;
+        });
+
+        document.getElementById('clear').addEventListener('click', function () {
+        document.getElementById('petType').value = '';
+            document.getElementById('Breed').value = '';
+            document.getElementById('Location').value = '';
+            document.getElementById('search').click();
+        });
+
+    });//close dropdownpopulater
+</script>
+
+

@@ -1,0 +1,246 @@
+﻿@model HappyPetsRescue.Models.PostPetViewModel
+
+@{
+    ViewBag.Title = "PostAPet";
+}
+
+<style>
+    .box {
+        width: 120px;
+        height: 30px;
+        border: 1px solid #999;
+        font-size: 18px;
+        color: Black;
+        background-color: #eee;
+        border-radius: 5px;
+        box-shadow: 4px 4px #6F4914;
+    }
+
+    h1 {
+        text-align: center;
+        color: #6F4914;
+    }
+
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        color: #6F4914;
+    }
+
+    input {
+        font-size:17px;
+    }
+
+    option {
+        font-size: 17px;
+    }
+
+    button {
+        font-size: 16px;
+        position: relative;
+        margin: auto;
+        padding: 1em 2.5em 1em 2.5em;
+        border: none;
+        background: Black;
+        transition: all 0.1s linear;
+        box-shadow: 10px 5px 5px #6F4914;
+    }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button span {
+            color: white;
+            font-weight: bold;
+        }
+
+        button .border {
+            position: absolute;
+            border: 0.15em solid #f7f7f7;
+            transition: all 0.3s 0.08s linear;
+            top: 50%;
+            left: 50%;
+            width: 3em;
+            height: 3em;
+            transform: translate(-50%, -50%);
+        }
+
+        button:hover .border {
+            display: block;
+            width: 10.7em;
+            height: 3.8em;
+        }
+
+    .full-rounded {
+        border-radius: 2em;
+    }
+
+</style>
+
+<h1 style="font-family: Brush Script MT, cursive;"><b>Post A Pet</b></h1>
+
+@using (Html.BeginForm("PostAPet", "Pet", FormMethod.Post))
+{
+    <div class="container-fluid">
+        <div class="row row-cols-4">
+            <div class="col">
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Full Name</label>
+                    <br />
+                    <select id="userName" name="userName" class="box" style="width:75%">
+                        <option value="">Select full name</option>
+                        @foreach (var item in Model.Users)
+                        {
+                            <option value="@item.UserID">@item.UserFullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="userPhoneNo" class="form-label">Phone Number</label>
+                    <br />
+                    <select id="userPhoneNo" name="userPhoneNo" class="box" style="width:75%">
+                        <option value="">Select phone number</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="petName">Name</label>
+                    <br />
+                    <input type="text" id="petName" name="petName" class="box" style="width:75%">
+                </div>
+                <div class="mb-3">
+                    <label for="petAge">Age</label>
+                    <br />
+                    <input type="number" id="petAge" name="petAge" class="box" style="width:75%">
+                </div>
+                <div class="mb-3">
+                    <label for="petWeight">Weight</label>
+                    <br />
+                    <input type="number" id="petWeight" name="petWeight" class="box" style="width:75%">
+                </div>
+                <div class="mb-3">
+                    <label for="image">Upload pet image</label>
+                    <br />
+                    <input type="file" id="image" name="image" accept="image/*" class="box" style="width:75%">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="petType" class="form-label">Pet Type</label>
+                    <br />
+                    <select id="petType" name="petType" class="box" style="width:75%">
+                        <option value="">Select type</option>
+                        @foreach (var item in Model.PetTypes)
+                        {
+                            <option value="@item.PetTypeID">@item.PetTypeName</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="petBreed" class="form-label">Breed</label>
+                    <br />
+                    <select id="petBreed" name="petBreed" class="box" style="width:75%">
+                        <option value="">Select breed</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <br />
+                    <select id="location" name="location" class="box" style="width:75%">
+                        <option value="">Select location</option>
+                        @foreach (var item in Model.Locations)
+                        {
+                            <option value="@item.LocationID">@item.LocationName</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <br />
+                    <select id="gender" name="gender" class="box" style="width:75%">
+                        <option value="">Select gender</option>
+                        @foreach (var item in Model.Genders)
+                        {
+                            <option value="@item.GenderID">@item.GenderName</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="petStory">Pet Story</label>
+                    <br />
+                    <textarea id="petStory" name="petStory" rows="3" placeholder="Please write the pet's story here..." style="width:100%; height:220px" class="box"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    @*<input type="submit" value="Post" class="btnStyle" style="width:100%" />*@
+                    <button type="submit" class="full-rounded">
+                        <span>Post Pet</span>
+                        <div class="border full-rounded"></div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+
+    $("#petType").change(function () {
+            var petTypeID = $(this).val();
+            if (petTypeID) {
+                $.get('@Url.Action("GetBreedByPetType", "Pet")', { petTypeID: petTypeID })
+                    .done(function (data) {
+                        var breedNames = data.split(";")[0].split(",");
+                        var breedIds = data.split(";")[1].split(",");
+                        var breeds = [];
+                        for (var i = 0; i < breedNames.length; i++) {
+                            breeds.push({ id: breedIds[i], name: breedNames[i] });
+                        }
+
+                        var breedDropdown = $("#petBreed");
+                        breedDropdown.empty();
+                        breedDropdown.append($("<option></option>").val("").text("Select breed"));
+                        $.each(breeds, function (i, breed) {
+                            breedDropdown.append($("<option></option>").val(breed.id).text(breed.name));
+                        });//close each function
+                        breedDropdown.prop("disabled", false);
+                    });//close done function
+            } else {
+                $("#petBreed").empty().append($("<option></option>").val("").text("Select breed")).prop("disabled", true);
+            }
+    }); //close supplier change function
+
+
+
+    $("#userName").change(function () {
+            var userID = $(this).val();
+            if (userID) {
+                $.get('@Url.Action("GetUserPhoneNumber", "Pet")', { userID: userID })
+                    .done(function (data) {
+                        var userPhoneNumbers = data.split(";")[0].split(",");
+                        var userIds = data.split(";")[1].split(",");
+                        var users = [];
+                        for (var i = 0; i < userPhoneNumbers.length; i++) {
+                            users.push({ id: userIds[i], name: userPhoneNumbers[i] });
+                        }
+
+                        var phoneDropdown = $("#userPhoneNo");
+                        phoneDropdown.empty();
+                        phoneDropdown.append($("<option></option>").val("").text("Select phone number"));
+                        $.each(users, function (i, user) {
+                            phoneDropdown.append($("<option></option>").val(user.id).text(user.name));
+                        });//close each function
+                        phoneDropdown.prop("disabled", false);
+                    });//close done function
+            } else {
+                $("#userPhoneNo").empty().append($("<option></option>").val("").text("Select phone number")).prop("disabled", true);
+            }
+        });
+
+</script>
